@@ -1,0 +1,65 @@
+<template>
+    <lightning-card title="File Upload" icon-name="doctype:attachment">
+        <div class="slds-m-around_medium">
+            <template if:false={isUploading}>
+                <lightning-input
+                    type="file"
+                    label="Select File"
+                    accept=".pdf,.doc,.docx,.txt,.jpg,.png"
+                    onchange={handleFileChange}
+                    disabled={isUploading}>
+                </lightning-input>
+
+                <template if:true={fileName}>
+                    <div class="slds-m-top_small">
+                        <p><strong>Selected File:</strong> {fileName}</p>
+                        <p><strong>Size:</strong> {fileSize}</p>
+                    </div>
+                </template>
+
+                <lightning-button
+                    label="Upload & Send to API"
+                    variant="brand"
+                    onclick={handleUpload}
+                    disabled={disableUpload}
+                    class="slds-m-top_medium">
+                </lightning-button>
+            </template>
+
+            <template if:true={isUploading}>
+                <lightning-spinner alternative-text="Uploading..." size="medium"></lightning-spinner>
+                <p class="slds-text-align_center slds-m-top_small">Processing file...</p>
+            </template>
+
+            <template if:true={successMessage}>
+                <div class="slds-m-top_medium">
+                    <div class="slds-notify slds-notify_alert slds-alert_success" role="alert">
+                        <span class="slds-assistive-text">Success</span>
+                        <lightning-icon icon-name="utility:success"
+                                      alternative-text="Success"
+                                      size="x-small"
+                                      variant="inverse"
+                                      class="slds-m-right_x-small">
+                        </lightning-icon>
+                        {successMessage}
+                    </div>
+                </div>
+            </template>
+
+            <template if:true={errorMessage}>
+                <div class="slds-m-top_medium">
+                    <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+                        <span class="slds-assistive-text">Error</span>
+                        <lightning-icon icon-name="utility:error"
+                                      alternative-text="Error"
+                                      size="x-small"
+                                      variant="inverse"
+                                      class="slds-m-right_x-small">
+                        </lightning-icon>
+                        {errorMessage}
+                    </div>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>
