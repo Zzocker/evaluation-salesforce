@@ -110,6 +110,9 @@ export default class FileUploader extends LightningElement {
         this.errorMessage = '';
         this.successMessage = '';
 
+        // Sanitize candidate name for filename
+        const fileName = this.candidateName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+
         downloadPDFReport({ candidateDocId: candidateDocId })
             .then(base64Data => {
                 // Convert base64 to blob
@@ -125,7 +128,7 @@ export default class FileUploader extends LightningElement {
                 const url = window.URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;
-                link.download = `evaluation-report-${candidateDocId}.pdf`;
+                link.download = `evaluation-report-${fileName}.pdf`;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
@@ -147,6 +150,9 @@ export default class FileUploader extends LightningElement {
         this.errorMessage = '';
         this.successMessage = '';
 
+        // Sanitize candidate name for filename
+        const fileName = this.candidateName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+
         downloadExcelReport({ candidateDocId: candidateDocId })
             .then(base64Data => {
                 // Convert base64 to blob
@@ -162,7 +168,7 @@ export default class FileUploader extends LightningElement {
                 const url = window.URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;
-                link.download = `evaluation-data-${candidateDocId}.xlsx`;
+                link.download = `evaluation-data-${fileName}.xlsx`;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
