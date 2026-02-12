@@ -8,20 +8,116 @@
             </template>
 
             <template if:true={evalDetails}>
-                <div class="slds-form" role="list">
-                    <template for:each={formattedEvalDetails} for:item="detail">
-                        <div key={detail.key} class="slds-form__row">
-                            <div class="slds-form__item" role="listitem">
-                                <div class="slds-form-element slds-form-element_readonly slds-form-element_stacked">
-                                    <span class="slds-form-element__label">{detail.key}</span>
-                                    <div class="slds-form-element__control">
-                                        <div class="slds-form-element__static">{detail.value}</div>
-                                    </div>
+                <!-- Candidate Information -->
+                <template if:true={candidateDoc}>
+                    <div class="slds-box slds-m-bottom_medium">
+                        <h3 class="slds-text-heading_small slds-m-bottom_small">Candidate Information</h3>
+                        <dl class="slds-dl_horizontal">
+                            <dt class="slds-dl_horizontal__label">Case ID:</dt>
+                            <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{candidateDoc.caseId}</dd>
+
+                            <dt class="slds-dl_horizontal__label">Name:</dt>
+                            <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{candidateName}</dd>
+
+                            <dt class="slds-dl_horizontal__label">Date of Birth:</dt>
+                            <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{candidateDOB}</dd>
+
+                            <dt class="slds-dl_horizontal__label">Document ID:</dt>
+                            <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{candidateDoc.id}</dd>
+                        </dl>
+                    </div>
+                </template>
+
+                <!-- Document List -->
+                <template if:true={hasDocuments}>
+                    <h3 class="slds-text-heading_small slds-m-bottom_small">Documents ({documentCount})</h3>
+                    <template for:each={documentList} for:item="doc">
+                        <div key={doc.id} class="slds-box slds-m-bottom_small">
+                            <div class="slds-grid slds-gutters">
+                                <!-- Basic Information -->
+                                <div class="slds-col slds-size_1-of-2">
+                                    <h4 class="slds-text-heading_small slds-m-bottom_x-small">Basic Information</h4>
+                                    <dl class="slds-dl_horizontal">
+                                        <dt class="slds-dl_horizontal__label">Verification:</dt>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.basicData.verificationName}</dd>
+
+                                        <dt class="slds-dl_horizontal__label">Name:</dt>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.basicData.nameAsPerDocument}</dd>
+
+                                        <dt class="slds-dl_horizontal__label">Institute:</dt>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.basicData.nameOfInstitute}</dd>
+
+                                        <dt class="slds-dl_horizontal__label">Program:</dt>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.basicData.program}</dd>
+
+                                        <dt class="slds-dl_horizontal__label">Level:</dt>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.basicData.level}</dd>
+
+                                        <dt class="slds-dl_horizontal__label">Registration #:</dt>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.basicData.registrationNumber}</dd>
+
+                                        <dt class="slds-dl_horizontal__label">Issue Date:</dt>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.basicData.issueDate}</dd>
+
+                                        <dt class="slds-dl_horizontal__label">Location:</dt>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.state}, {doc.country}</dd>
+                                    </dl>
+                                </div>
+
+                                <!-- Educational Details -->
+                                <div class="slds-col slds-size_1-of-2">
+                                    <h4 class="slds-text-heading_small slds-m-bottom_x-small">Educational Details</h4>
+                                    <dl class="slds-dl_horizontal">
+                                        <dt class="slds-dl_horizontal__label">University:</dt>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.educationalDetails.universityName}</dd>
+
+                                        <dt class="slds-dl_horizontal__label">College:</dt>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.educationalDetails.collegeName}</dd>
+
+                                        <dt class="slds-dl_horizontal__label">Degree:</dt>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.educationalDetails.degreeName}</dd>
+
+                                        <dt class="slds-dl_horizontal__label">Major:</dt>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.educationalDetails.major}</dd>
+
+                                        <dt class="slds-dl_horizontal__label">Admission Year:</dt>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.educationalDetails.yearOfAdmission}</dd>
+
+                                        <dt class="slds-dl_horizontal__label">Completion Year:</dt>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.educationalDetails.yearOfCompletion}</dd>
+
+                                        <dt class="slds-dl_horizontal__label">CGPA:</dt>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.educationalDetails.cgpa}</dd>
+
+                                        <dt class="slds-dl_horizontal__label">Total Credits:</dt>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.educationalDetails.totalCredits}</dd>
+                                    </dl>
                                 </div>
                             </div>
+
+                            <!-- Files -->
+                            <template if:true={doc.files}>
+                                <div class="slds-m-top_small">
+                                    <h5 class="slds-text-heading_small slds-m-bottom_x-small">Attached Files</h5>
+                                    <template for:each={doc.files} for:item="file">
+                                        <div key={file.url} class="slds-m-bottom_x-small">
+                                            <lightning-button
+                                                label="View Document"
+                                                variant="base"
+                                                icon-name="utility:file"
+                                                onclick={handleViewFile}
+                                                data-url={file.url}>
+                                            </lightning-button>
+                                            <template if:true={file.tags}>
+                                                <lightning-badge label={file.tags} class="slds-m-left_x-small"></lightning-badge>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
                         </div>
                     </template>
-                </div>
+                </template>
             </template>
 
             <template if:true={detailsError}>

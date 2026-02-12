@@ -36,12 +36,42 @@ export default class FileUploader extends LightningElement {
         return !this.fileData || this.isUploading;
     }
 
-    get formattedEvalDetails() {
-        if (!this.evalDetails) return [];
-        return Object.keys(this.evalDetails).map(key => ({
-            key: key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1'),
-            value: JSON.stringify(this.evalDetails[key])
-        }));
+    // Candidate document getters
+    get candidateDoc() {
+        return this.evalDetails?.candidateDoc;
+    }
+
+    get candidateName() {
+        const names = this.candidateDoc?.info?.names;
+        if (names && names.length > 0) {
+            return names[0].value;
+        }
+        return 'N/A';
+    }
+
+    get candidateDOB() {
+        return this.candidateDoc?.info?.dateOfBirth || 'N/A';
+    }
+
+    // Document list getters
+    get documentList() {
+        return this.evalDetails?.documentList || [];
+    }
+
+    get hasDocuments() {
+        return this.documentList.length > 0;
+    }
+
+    get documentCount() {
+        return this.documentList.length;
+    }
+
+    // Handle view file button click
+    handleViewFile(event) {
+        const fileUrl = event.target.dataset.url;
+        if (fileUrl) {
+            window.open(fileUrl, '_blank');
+        }
     }
 
     handleFileChange(event) {
