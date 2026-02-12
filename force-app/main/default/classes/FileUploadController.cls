@@ -10,13 +10,27 @@ public with sharing class FileUploadController {
         List<Object> documentList = (List<Object>) documentsResp.get('data');
         List<Object> newDocumentList = new List<Object>();
 
+        // Define valid statuses for filtering documents
+        Set<Integer> validStatus = new Set<Integer>{
+            60,  // READY_FOR_REVIEW
+            110, // IN_REVIEW
+            160, // REVIEW_GRADING
+            210  // COMPLETED
+        };
 
         for (Object docObj : documentList) {
             Map<String, Object> doc = (Map<String, Object>) docObj;
             String docId = (String) doc.get('id');
             Map<String, Object> docDetails = fetchDocumentById(docId);
-            Object docData = docDetails.get('data');
-            newDocumentList.add(docData);
+            Map<String, Object> docData = (Map<String, Object>) docDetails.get('data');
+
+            // Get status and check if it's in valid status set
+            Object statusObj = docData.get('status');
+            Integer status = statusObj instanceof Integer ? (Integer) statusObj : null;
+
+            if (status != null && validStatus.contains(status)) {
+                newDocumentList.add(docData);
+            }
         }
 
         Map<String, Object> result = new Map<String, Object>();
@@ -28,7 +42,7 @@ public with sharing class FileUploadController {
     public static Map<String, Object> fetchCandidateDoc(String recordId) {
         try {
             // Configure your external API endpoint for fetching evaluation details
-            String endpoint = 'https://eval-api.trential.dev/v1/eval/candidate-docs/698d78d10378e595d7be299f'; // + recordId;
+            String endpoint = 'https://eval-api.trential.dev/v1/eval/candidate-docs/candidate-identifier?candidateIdentifier=' + recordId;
 
             // Create HTTP request
             HttpRequest req = new HttpRequest();
