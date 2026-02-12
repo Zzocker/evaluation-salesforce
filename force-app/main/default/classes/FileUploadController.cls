@@ -128,7 +128,55 @@ public with sharing class FileUploadController {
     }
 
     @AuraEnabled
-    public static String uploadFileToAPI(String fileName, String fileBase64, String contentType, String recordId) {
+    public static Map<String, Object> uploadDocument(String fileName, String fileBase64, String contentType, String recordId) {
+        Map<String, Object> uploadFileResp = uploadFile(fileName, fileBase64, contentType);
+        Object fileData = uploadFileResp.get('data');
+        Map<String, Object> sendDocForEvalResp = sendDocumentForEvaluation(fileData, recordId);
+        return sendDocForEvalResp;
+    }
+
+    private static Map<String, Object> sendDocumentForEvaluation(Object fileData, String recordId) {
+        try {
+            // Configure your external API endpoint for creating evaluation document
+            String endpoint = 'https://eval-api.trential.dev/v1/eval/documents';
+
+            // Create HTTP request
+            HttpRequest req = new HttpRequest();
+            req.setEndpoint(endpoint);
+            req.setMethod('POST');
+            req.setTimeout(120000); // 120 seconds timeout
+
+            // Set headers
+            req.setHeader('Content-Type', 'application/json');
+            req.setHeader('x-api-key', 'api_test_8ae43865-28c1-4a46-81b7-f8421a640c74');
+
+            // Create request body
+            Map<String, Object> requestBody = new Map<String, Object>();
+            requestBody.put('files', fileData);
+            requestBody.put('candidateIdentifier', recordId);
+
+            req.setBody(JSON.serialize(requestBody));
+
+            // Make the callout
+            Http http = new Http();
+            HttpResponse res = http.send(req);
+
+            // Process response
+            if (res.getStatusCode() == 200 || res.getStatusCode() == 201) {
+                // Parse and return the response
+                Map<String, Object> responseData = (Map<String, Object>) JSON.deserializeUntyped(res.getBody());
+                return responseData;
+            } else {
+                throw new AuraHandledException('API Error: ' + res.getStatus() + ' - ' + res.getBody());
+            }
+
+        } catch (Exception e) {
+            System.debug('Error sending document for evaluation: ' + e.getMessage());
+            throw new AuraHandledException('Error: ' + e.getMessage());
+        }
+    }
+
+    private static Map<String, Object> uploadFile(String fileName, String fileBase64, String contentType) {
         try {
             // Configure your external API endpoint here
             String endpoint = 'https://eval-api.trential.dev/v1/file/files'; // REPLACE WITH YOUR ACTUAL ENDPOINT
@@ -160,8 +208,8 @@ public with sharing class FileUploadController {
             // Process response
             if (res.getStatusCode() == 200 || res.getStatusCode() == 201) {
                 // Log success
-                System.debug('File uploaded successfully: ' + fileName);
-                return res.getBody();
+                Map<String, Object> responseData = (Map<String, Object>) JSON.deserializeUntyped(res.getBody());
+                return responseData;
             } else {
                 throw new AuraHandledException('API Error: ' + res.getStatus() + ' - ' + res.getBody());
             }

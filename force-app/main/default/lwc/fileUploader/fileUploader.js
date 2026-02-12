@@ -1,5 +1,5 @@
 import { LightningElement, api } from 'lwc';
-import uploadFileToAPI from '@salesforce/apex/FileUploadController.uploadFileToAPI';
+import uploadDocument from '@salesforce/apex/FileUploadController.uploadDocument';
 import fetchEvalDetails from '@salesforce/apex/FileUploadController.fetchEvalDetails';
 
 export default class FileUploader extends LightningElement {
@@ -141,13 +141,14 @@ export default class FileUploader extends LightningElement {
         this.errorMessage = '';
         this.successMessage = '';
 
-        uploadFileToAPI({
+        uploadDocument({
             fileName: this.fileData.filename,
             fileBase64: this.fileData.base64,
             contentType: this.fileData.contentType,
             recordId: this.recordId
         })
             .then(result => {
+                console.log('result = ', result)
                 this.successMessage = `File uploaded successfully! Response: ${result}`;
                 this.fileData = null;
                 this.fileName = '';
