@@ -131,7 +131,10 @@ public with sharing class FileUploadController {
     public static String uploadFileToAPI(String fileName, String fileBase64, String contentType, String recordId) {
         try {
             // Configure your external API endpoint here
-            String endpoint = 'https://4e9f-14-143-183-70.ngrok-free.app/upload'; // REPLACE WITH YOUR ACTUAL ENDPOINT
+            String endpoint = 'https://eval-api.trential.dev/v1/file/files'; // REPLACE WITH YOUR ACTUAL ENDPOINT
+
+            // Generate boundary for multipart/form-data
+            String boundary = '----WebKitFormBoundary' + EncodingUtil.convertToHex(Crypto.generateAesKey(128)).substring(0, 16);
 
             // Create HTTP request
             HttpRequest req = new HttpRequest();
@@ -139,20 +142,16 @@ public with sharing class FileUploadController {
             req.setMethod('POST');
             req.setTimeout(120000); // 120 seconds timeout
 
-            // Set headers
-            req.setHeader('Content-Type', 'application/json');
+            // Set headers for multipart/form-data
+            req.setHeader('Content-Type', 'multipart/form-data; boundary=' + boundary);
             // Add any authentication headers if needed
             // req.setHeader('Authorization', 'Bearer YOUR_TOKEN');
 
-            // Create request body
-            Map<String, Object> requestBody = new Map<String, Object>{
-                'fileName' => fileName,
-                'fileContent' => fileBase64,
-                'contentType' => contentType,
-                'recordId' => recordId
-            };
+            // Build multipart body
+            Blob bodyBlob = buildMultipartBody(boundary, fileName, fileBase64, contentType);
+            req.setBodyAsBlob(bodyBlob);
+            req.setHeader('x-api-key', 'api_test_8ae43865-28c1-4a46-81b7-f8421a640c74');
 
-            req.setBody(JSON.serialize(requestBody));
 
             // Make the callout
             Http http = new Http();
@@ -171,5 +170,23 @@ public with sharing class FileUploadController {
             System.debug('Error uploading file: ' + e.getMessage());
             throw new AuraHandledException('Error: ' + e.getMessage());
         }
+    }
+
+    private static Blob buildMultipartBody(String boundary, String fileName, String fileBase64, String contentType) {
+        String header = '--' + boundary + '\r\n';
+        header += 'Content-Disposition: form-data; name="file"; filename="' + fileName + '"\r\n';
+        header += 'Content-Type: ' + contentType + '\r\n\r\n';
+
+        String footer = '\r\n--' + boundary + '--';
+
+        // Decode the base64 file content
+        Blob fileBlob = EncodingUtil.base64Decode(fileBase64);
+
+        // Concatenate blobs using hex encoding (most reliable method in Apex)
+        String hexHeader = EncodingUtil.convertToHex(Blob.valueOf(header));
+        String hexFile = EncodingUtil.convertToHex(fileBlob);
+        String hexFooter = EncodingUtil.convertToHex(Blob.valueOf(footer));
+
+        return EncodingUtil.convertFromHex(hexHeader + hexFile + hexFooter);
     }
 }
