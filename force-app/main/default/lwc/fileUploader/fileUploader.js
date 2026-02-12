@@ -40,7 +40,7 @@ export default class FileUploader extends LightningElement {
         if (!this.evalDetails) return [];
         return Object.keys(this.evalDetails).map(key => ({
             key: key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1'),
-            value: this.evalDetails[key]
+            value: JSON.stringify(this.evalDetails[key])
         }));
     }
 
