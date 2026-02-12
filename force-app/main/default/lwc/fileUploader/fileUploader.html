@@ -34,35 +34,23 @@
                 <template if:true={hasDocuments}>
                     <h3 class="slds-text-heading_small slds-m-bottom_small">Documents ({documentCount})</h3>
                     <template for:each={documentList} for:item="doc">
-                        <div key={doc.id} class="slds-box slds-m-bottom_small">
+                        <div key={doc._id} class="slds-box slds-m-bottom_small">
                             <div class="slds-grid slds-gutters">
-                                <!-- Basic Information -->
+                                <!-- Candidate Information -->
                                 <div class="slds-col slds-size_1-of-2">
-                                    <h4 class="slds-text-heading_small slds-m-bottom_x-small">Basic Information</h4>
+                                    <h4 class="slds-text-heading_small slds-m-bottom_x-small">Candidate Information</h4>
                                     <dl class="slds-dl_horizontal">
-                                        <dt class="slds-dl_horizontal__label">Verification:</dt>
-                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.basicData.verificationName}</dd>
-
                                         <dt class="slds-dl_horizontal__label">Name:</dt>
-                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.basicData.nameAsPerDocument}</dd>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.candidateDetails.fullName.text}</dd>
 
-                                        <dt class="slds-dl_horizontal__label">Institute:</dt>
-                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.basicData.nameOfInstitute}</dd>
-
-                                        <dt class="slds-dl_horizontal__label">Program:</dt>
-                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.basicData.program}</dd>
-
-                                        <dt class="slds-dl_horizontal__label">Level:</dt>
-                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.basicData.level}</dd>
-
-                                        <dt class="slds-dl_horizontal__label">Registration #:</dt>
-                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.basicData.registrationNumber}</dd>
-
-                                        <dt class="slds-dl_horizontal__label">Issue Date:</dt>
-                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.basicData.issueDate}</dd>
+                                        <dt class="slds-dl_horizontal__label">Date of Birth:</dt>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.candidateDetails.dateOfBirth.text}</dd>
 
                                         <dt class="slds-dl_horizontal__label">Location:</dt>
-                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.state}, {doc.country}</dd>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.state.text}, {doc.country.text}</dd>
+
+                                        <dt class="slds-dl_horizontal__label">Translation:</dt>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.translation.from} → {doc.translation.to}</dd>
                                     </dl>
                                 </div>
 
@@ -71,31 +59,72 @@
                                     <h4 class="slds-text-heading_small slds-m-bottom_x-small">Educational Details</h4>
                                     <dl class="slds-dl_horizontal">
                                         <dt class="slds-dl_horizontal__label">University:</dt>
-                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.educationalDetails.universityName}</dd>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.educationalDetails.universityName.text}</dd>
 
                                         <dt class="slds-dl_horizontal__label">College:</dt>
-                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.educationalDetails.collegeName}</dd>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.educationalDetails.collegeName.text}</dd>
 
                                         <dt class="slds-dl_horizontal__label">Degree:</dt>
-                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.educationalDetails.degreeName}</dd>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.educationalDetails.degreeName.text}</dd>
+
+                                        <dt class="slds-dl_horizontal__label">Level:</dt>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.educationalDetails.degreeLevel.text}</dd>
+
+                                        <dt class="slds-dl_horizontal__label">Program:</dt>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.educationalDetails.program.text}</dd>
 
                                         <dt class="slds-dl_horizontal__label">Major:</dt>
-                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.educationalDetails.major}</dd>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.educationalDetails.major.text}</dd>
 
-                                        <dt class="slds-dl_horizontal__label">Admission Year:</dt>
-                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.educationalDetails.yearOfAdmission}</dd>
+                                        <dt class="slds-dl_horizontal__label">Year of Completion:</dt>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.educationalDetails.yearOfCompletion.text}</dd>
 
-                                        <dt class="slds-dl_horizontal__label">Completion Year:</dt>
-                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.educationalDetails.yearOfCompletion}</dd>
+                                        <dt class="slds-dl_horizontal__label">Date of Issue:</dt>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.educationalDetails.dateOfIssue.text}</dd>
 
                                         <dt class="slds-dl_horizontal__label">CGPA:</dt>
-                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.educationalDetails.cgpa}</dd>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.educationalDetails.cgpa.text}</dd>
 
                                         <dt class="slds-dl_horizontal__label">Total Credits:</dt>
-                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.educationalDetails.totalCredits}</dd>
+                                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{doc.educationalDetails.totalCredits.text}</dd>
                                     </dl>
                                 </div>
                             </div>
+
+                            <!-- Course Grades -->
+                            <template if:true={doc.courseGrades}>
+                                <div class="slds-m-top_medium">
+                                    <h5 class="slds-text-heading_small slds-m-bottom_x-small">Course Grades</h5>
+                                    <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                                        <thead>
+                                            <tr class="slds-line-height_reset">
+                                                <th scope="col"><div class="slds-truncate">Course Code</div></th>
+                                                <th scope="col"><div class="slds-truncate">Course Name</div></th>
+                                                <th scope="col"><div class="slds-truncate">Credits</div></th>
+                                                <th scope="col"><div class="slds-truncate">Grade</div></th>
+                                                <th scope="col"><div class="slds-truncate">Marks Scored</div></th>
+                                                <th scope="col"><div class="slds-truncate">Max. Marks</div></th>
+                                                <th scope="col"><div class="slds-truncate">Term</div></th>
+                                                <th scope="col"><div class="slds-truncate">Year</div></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <template for:each={doc.courseGrades} for:item="course">
+                                                <tr key={course.id} class="slds-hint-parent">
+                                                    <td><div class="slds-truncate">{course.courseCode.text}</div></td>
+                                                    <td><div class="slds-truncate">{course.courseName.text}</div></td>
+                                                    <td><div class="slds-truncate">{course.credit.text}</div></td>
+                                                    <td><div class="slds-truncate">{course.grade.text}</div></td>
+                                                    <td><div class="slds-truncate">{course.marksScored.text}</div></td>
+                                                    <td><div class="slds-truncate">{course.maximumMarks.text}</div></td>
+                                                    <td><div class="slds-truncate">{course.term.text}</div></td>
+                                                    <td><div class="slds-truncate">{course.year.text}</div></td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </template>
 
                             <!-- Files -->
                             <template if:true={doc.files}>

@@ -7,16 +7,28 @@ public with sharing class FileUploadController {
         String candidateDocId = (String) candidateData.get('id');
         Map<String, Object> documentsResp = fetchDocuments(candidateDocId);
 
+        List<Object> documentList = (List<Object>) documentsResp.get('data');
+        List<Object> newDocumentList = new List<Object>();
+
+
+        for (Object docObj : documentList) {
+            Map<String, Object> doc = (Map<String, Object>) docObj;
+            String docId = (String) doc.get('id');
+            Map<String, Object> docDetails = fetchDocumentById(docId);
+            Object docData = docDetails.get('data');
+            newDocumentList.add(docData);
+        }
+
         Map<String, Object> result = new Map<String, Object>();
         result.put('candidateDoc', candidateDocResp.get('data'));
-        result.put('documentList', documentsResp.get('data'));
+        result.put('documentList', newDocumentList);
         return result;
     }
 
     public static Map<String, Object> fetchCandidateDoc(String recordId) {
         try {
             // Configure your external API endpoint for fetching evaluation details
-            String endpoint = 'https://eval-api.trential.dev/v1/eval/candidate-docs/6944ec4452b670a75d904425'; // + recordId;
+            String endpoint = 'https://eval-api.trential.dev/v1/eval/candidate-docs/698d78d10378e595d7be299f'; // + recordId;
 
             // Create HTTP request
             HttpRequest req = new HttpRequest();
@@ -51,6 +63,40 @@ public with sharing class FileUploadController {
         try {
             // Configure your external API endpoint for fetching evaluation details
             String endpoint = 'https://eval-api.trential.dev/v1/eval/documents?limit=100&candidateDocsId=' + candidateDocsId;
+
+            // Create HTTP request
+            HttpRequest req = new HttpRequest();
+            req.setEndpoint(endpoint);
+            req.setMethod('GET');
+            req.setTimeout(120000); // 120 seconds timeout
+
+            // Set headers
+            req.setHeader('Content-Type', 'application/json');
+            req.setHeader('x-api-key', 'api_test_8ae43865-28c1-4a46-81b7-f8421a640c74');
+
+            // Make the callout
+            Http http = new Http();
+            HttpResponse res = http.send(req);
+
+            // Process response
+            if (res.getStatusCode() == 200) {
+                // Parse and return the response
+                Map<String, Object> responseData = (Map<String, Object>) JSON.deserializeUntyped(res.getBody());
+                return responseData;
+            } else {
+                throw new AuraHandledException('API Error: ' + res.getStatus() + ' - ' + res.getBody());
+            }
+
+        } catch (Exception e) {
+            System.debug('Error fetching evaluation details: ' + e.getMessage());
+            throw new AuraHandledException('Error: ' + e.getMessage());
+        }
+    }
+
+    public static Map<String, Object> fetchDocumentById(String documentId) {
+        try {
+            // Configure your external API endpoint for fetching evaluation details
+            String endpoint = 'https://eval-api.trential.dev/v1/eval/documents/' + documentId + '?responseType=complete-without-meta';
 
             // Create HTTP request
             HttpRequest req = new HttpRequest();
