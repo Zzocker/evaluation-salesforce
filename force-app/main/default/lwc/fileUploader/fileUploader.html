@@ -189,16 +189,37 @@
                 </template>
             </template>
 
+            <!-- No Documents State -->
+            <template if:false={isLoadingDetails}>
+                <template if:false={evalDetails}>
+                    <template if:false={detailsError}>
+                        <div class="slds-illustration slds-illustration_small">
+                            <div class="slds-text-align_center">
+                                <lightning-icon icon-name="utility:database" size="large" class="slds-m-bottom_small"></lightning-icon>
+                                <h3 class="slds-text-heading_medium">No Documents Present</h3>
+                                <p class="slds-text-body_regular slds-m-top_small">
+                                    No evaluation documents are currently available for this candidate.
+                                </p>
+                            </div>
+                        </div>
+                    </template>
+                </template>
+            </template>
+
+            <!-- Error State -->
             <template if:true={detailsError}>
-                <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
-                    <span class="slds-assistive-text">Error</span>
-                    <lightning-icon icon-name="utility:error"
-                                  alternative-text="Error"
+                <div class="slds-notify slds-notify_alert slds-alert_warning" role="alert">
+                    <span class="slds-assistive-text">Warning</span>
+                    <lightning-icon icon-name="utility:warning"
+                                  alternative-text="Warning"
                                   size="x-small"
                                   variant="inverse"
                                   class="slds-m-right_x-small">
                     </lightning-icon>
-                    {detailsError}
+                    <div>
+                        <strong>Unable to load evaluation details</strong>
+                        <p class="slds-m-top_x-small">No documents are present for evaluation at this time. Please ensure the candidate record is properly configured.</p>
+                    </div>
                 </div>
             </template>
         </div>

@@ -82,13 +82,18 @@ public with sharing class FileUploadController {
                 // Parse and return the response
                 Map<String, Object> responseData = (Map<String, Object>) JSON.deserializeUntyped(res.getBody());
                 return responseData;
+            } else if (res.getStatusCode() == 404) {
+                throw new AuraHandledException('No evaluation documents found for this candidate.');
             } else {
-                throw new AuraHandledException('API Error: ' + res.getStatus() + ' - ' + res.getBody());
+                throw new AuraHandledException('Unable to fetch evaluation details. Status: ' + res.getStatus());
             }
 
         } catch (Exception e) {
             System.debug('Error fetching evaluation details: ' + e.getMessage());
-            throw new AuraHandledException('Error: ' + e.getMessage());
+            if (e instanceof AuraHandledException) {
+                throw e;
+            }
+            throw new AuraHandledException('Unable to connect to evaluation service. Please try again later.');
         }
     }
 

@@ -32,13 +32,26 @@ export default class FileUploader extends LightningElement {
 
         fetchEvalDetails({ recordId: this.recordId })
             .then(data => {
-                this.evalDetails = data;
-                this.detailsError = '';
+                if (data && data.candidateDoc) {
+                    this.evalDetails = data;
+                    this.detailsError = '';
+                } else {
+                    // No candidate document found
+                    this.evalDetails = null;
+                    this.detailsError = '';
+                }
             })
             .catch(error => {
-                this.detailsError = error.body ? error.body.message : 'Error fetching evaluation details';
-                this.evalDetails = null;
                 console.error('Error fetching details:', error);
+
+                // Set user-friendly error message
+                let errorMsg = 'Error fetching evaluation details';
+                if (error.body && error.body.message) {
+                    errorMsg = error.body.message;
+                }
+
+                this.detailsError = errorMsg;
+                this.evalDetails = null;
             })
             .finally(() => {
                 this.isLoadingDetails = false;
