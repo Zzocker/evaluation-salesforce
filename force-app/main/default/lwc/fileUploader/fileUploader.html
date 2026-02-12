@@ -1,4 +1,45 @@
 <template>
+    <!-- Section 1: Evaluation Details -->
+    <lightning-card title="Evaluation Details" icon-name="standard:contract" class="slds-m-bottom_medium">
+        <div class="slds-m-around_medium">
+            <template if:true={isLoadingDetails}>
+                <lightning-spinner alternative-text="Loading details..." size="small"></lightning-spinner>
+                <p class="slds-text-align_center slds-m-top_small">Loading evaluation details...</p>
+            </template>
+
+            <template if:true={evalDetails}>
+                <div class="slds-form" role="list">
+                    <template for:each={formattedEvalDetails} for:item="detail">
+                        <div key={detail.key} class="slds-form__row">
+                            <div class="slds-form__item" role="listitem">
+                                <div class="slds-form-element slds-form-element_readonly slds-form-element_stacked">
+                                    <span class="slds-form-element__label">{detail.key}</span>
+                                    <div class="slds-form-element__control">
+                                        <div class="slds-form-element__static">{detail.value}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+            <template if:true={detailsError}>
+                <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+                    <span class="slds-assistive-text">Error</span>
+                    <lightning-icon icon-name="utility:error"
+                                  alternative-text="Error"
+                                  size="x-small"
+                                  variant="inverse"
+                                  class="slds-m-right_x-small">
+                    </lightning-icon>
+                    {detailsError}
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+
+    <!-- Section 2: File Upload -->
     <lightning-card title="File Upload" icon-name="doctype:attachment">
         <div class="slds-m-around_medium">
             <template if:false={isUploading}>

@@ -1,9 +1,11 @@
-import { LightningElement, api } from 'lwc';
+import { LightningElement, api, wire } from 'lwc';
 import uploadFileToAPI from '@salesforce/apex/FileUploadController.uploadFileToAPI';
+import fetchEvalDetails from '@salesforce/apex/FileUploadController.fetchEvalDetails';
 
 export default class FileUploader extends LightningElement {
     @api recordId; // Automatically gets the Student record ID when placed on record page
 
+    // File upload properties
     fileData;
     fileName = '';
     fileSize = '';
@@ -11,8 +13,35 @@ export default class FileUploader extends LightningElement {
     successMessage = '';
     errorMessage = '';
 
+    // Evaluation details properties
+    evalDetails = null;
+    isLoadingDetails = true;
+    detailsError = '';
+
+    // Wire service to fetch evaluation details
+    @wire(fetchEvalDetails, { recordId: '$recordId' })
+    wiredEvalDetails({ error, data }) {
+        this.isLoadingDetails = false;
+        if (data) {
+            this.evalDetails = data;
+            this.detailsError = '';
+        } else if (error) {
+            this.detailsError = error.body ? error.body.message : 'Error fetching evaluation details';
+            this.evalDetails = null;
+            console.error('Error fetching details:', error);
+        }
+    }
+
     get disableUpload() {
         return !this.fileData || this.isUploading;
+    }
+
+    get formattedEvalDetails() {
+        if (!this.evalDetails) return [];
+        return Object.keys(this.evalDetails).map(key => ({
+            key: key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1'),
+            value: this.evalDetails[key]
+        }));
     }
 
     handleFileChange(event) {

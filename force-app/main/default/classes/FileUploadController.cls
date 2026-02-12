@@ -1,5 +1,41 @@
 public with sharing class FileUploadController {
 
+    @AuraEnabled(cacheable=true)
+    public static Map<String, Object> fetchEvalDetails(String recordId) {
+        try {
+            // Configure your external API endpoint for fetching evaluation details
+            String endpoint = 'https://4e9f-14-143-183-70.ngrok-free.app/eval/' + recordId;
+
+            // Create HTTP request
+            HttpRequest req = new HttpRequest();
+            req.setEndpoint(endpoint);
+            req.setMethod('GET');
+            req.setTimeout(120000); // 120 seconds timeout
+
+            // Set headers
+            req.setHeader('Content-Type', 'application/json');
+            // Add any authentication headers if needed
+            // req.setHeader('Authorization', 'Bearer YOUR_TOKEN');
+
+            // Make the callout
+            Http http = new Http();
+            HttpResponse res = http.send(req);
+
+            // Process response
+            if (res.getStatusCode() == 200) {
+                // Parse and return the response
+                Map<String, Object> responseData = (Map<String, Object>) JSON.deserializeUntyped(res.getBody());
+                return responseData;
+            } else {
+                throw new AuraHandledException('API Error: ' + res.getStatus() + ' - ' + res.getBody());
+            }
+
+        } catch (Exception e) {
+            System.debug('Error fetching evaluation details: ' + e.getMessage());
+            throw new AuraHandledException('Error: ' + e.getMessage());
+        }
+    }
+
     @AuraEnabled
     public static String uploadFileToAPI(String fileName, String fileBase64, String contentType, String recordId) {
         try {
