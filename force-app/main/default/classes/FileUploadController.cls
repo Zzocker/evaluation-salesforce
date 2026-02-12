@@ -1,6 +1,6 @@
 public with sharing class FileUploadController {
 
-    @AuraEnabled(cacheable=true)
+    @AuraEnabled
     public static Map<String, Object> fetchEvalDetails(String recordId) {
         Map<String, Object> candidateDocResp = fetchCandidateDoc(recordId);
         Map<String, Object> candidateData = (Map<String, Object>) candidateDocResp.get('data');

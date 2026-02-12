@@ -1,4 +1,4 @@
-import { LightningElement, api, wire } from 'lwc';
+import { LightningElement, api } from 'lwc';
 import uploadFileToAPI from '@salesforce/apex/FileUploadController.uploadFileToAPI';
 import fetchEvalDetails from '@salesforce/apex/FileUploadController.fetchEvalDetails';
 
@@ -18,18 +18,34 @@ export default class FileUploader extends LightningElement {
     isLoadingDetails = true;
     detailsError = '';
 
-    // Wire service to fetch evaluation details
-    @wire(fetchEvalDetails, { recordId: '$recordId' })
-    wiredEvalDetails({ error, data }) {
-        this.isLoadingDetails = false;
-        if (data) {
-            this.evalDetails = data;
-            this.detailsError = '';
-        } else if (error) {
-            this.detailsError = error.body ? error.body.message : 'Error fetching evaluation details';
-            this.evalDetails = null;
-            console.error('Error fetching details:', error);
-        }
+    // Load evaluation details when component is connected
+    connectedCallback() {
+        this.loadEvalDetails();
+    }
+
+    // Load evaluation details
+    loadEvalDetails() {
+        this.isLoadingDetails = true;
+        this.detailsError = '';
+
+        fetchEvalDetails({ recordId: this.recordId })
+            .then(data => {
+                this.evalDetails = data;
+                this.detailsError = '';
+            })
+            .catch(error => {
+                this.detailsError = error.body ? error.body.message : 'Error fetching evaluation details';
+                this.evalDetails = null;
+                console.error('Error fetching details:', error);
+            })
+            .finally(() => {
+                this.isLoadingDetails = false;
+            });
+    }
+
+    // Reload evaluation details
+    handleReload() {
+        this.loadEvalDetails();
     }
 
     get disableUpload() {

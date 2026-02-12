@@ -1,6 +1,14 @@
 <template>
     <!-- Section 1: Evaluation Details -->
     <lightning-card title="Evaluation Details" icon-name="standard:contract" class="slds-m-bottom_medium">
+        <div slot="actions">
+            <lightning-button
+                label="Reload"
+                icon-name="utility:refresh"
+                onclick={handleReload}
+                disabled={isLoadingDetails}>
+            </lightning-button>
+        </div>
         <div class="slds-m-around_medium">
             <template if:true={isLoadingDetails}>
                 <lightning-spinner alternative-text="Loading details..." size="small"></lightning-spinner>
