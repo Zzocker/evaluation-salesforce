@@ -38,6 +38,36 @@
                     </div>
                 </template>
 
+                <!-- Evaluation Report Section -->
+                <template if:true={reportReady}>
+                    <div class="slds-box slds-m-bottom_medium slds-theme_success">
+                        <h3 class="slds-text-heading_small slds-m-bottom_small">
+                            <lightning-icon icon-name="utility:checkin" size="small" class="slds-m-right_x-small"></lightning-icon>
+                            Evaluation Report
+                        </h3>
+                        <p class="slds-m-bottom_small">Your evaluation report is ready for download.</p>
+                        <div class="slds-grid slds-gutters">
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-button
+                                    label="Download PDF Report"
+                                    variant="brand"
+                                    icon-name="utility:pdf_ext"
+                                    onclick={handleDownloadPDF}
+                                    class="slds-m-right_small">
+                                </lightning-button>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-button
+                                    label="Download Excel Report"
+                                    variant="success"
+                                    icon-name="utility:table"
+                                    onclick={handleDownloadExcel}>
+                                </lightning-button>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
                 <!-- Document List -->
                 <template if:true={hasDocuments}>
                     <h3 class="slds-text-heading_small slds-m-bottom_small">Documents ({documentCount})</h3>

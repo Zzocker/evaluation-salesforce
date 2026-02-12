@@ -4,6 +4,24 @@ public with sharing class FileUploadController {
     public static Map<String, Object> fetchEvalDetails(String recordId) {
         Map<String, Object> candidateDocResp = fetchCandidateDoc(recordId);
         Map<String, Object> candidateData = (Map<String, Object>) candidateDocResp.get('data');
+
+        // Check if report is ready (any target institute with null institute and evaluationCompleted = true)
+        Boolean reportReady = false;
+        List<Object> targetInstitutes = (List<Object>) candidateData.get('targetInstitutes');
+        if (targetInstitutes != null) {
+            for (Object targetObj : targetInstitutes) {
+                Map<String, Object> target = (Map<String, Object>) targetObj;
+                Object instituteValue = target.get('institute');
+                Object evalCompletedObj = target.get('evaluationCompleted');
+                Boolean evalCompleted = evalCompletedObj instanceof Boolean ? (Boolean) evalCompletedObj : false;
+
+                if (instituteValue == null && evalCompleted == true) {
+                    reportReady = true;
+                    break;
+                }
+            }
+        }
+
         String candidateDocId = (String) candidateData.get('id');
         Map<String, Object> documentsResp = fetchDocuments(candidateDocId);
 
@@ -36,6 +54,7 @@ public with sharing class FileUploadController {
         Map<String, Object> result = new Map<String, Object>();
         result.put('candidateDoc', candidateDocResp.get('data'));
         result.put('documentList', newDocumentList);
+        result.put('reportReady', reportReady);
         return result;
     }
 
@@ -250,5 +269,59 @@ public with sharing class FileUploadController {
         String hexFooter = EncodingUtil.convertToHex(Blob.valueOf(footer));
 
         return EncodingUtil.convertFromHex(hexHeader + hexFile + hexFooter);
+    }
+
+    @AuraEnabled
+    public static String downloadPDFReport(String candidateDocId) {
+        try {
+            String endpoint = 'https://eval-api.trential.dev/v1/eval/candidate-docs/' + candidateDocId + '/combined-evaluation-report/export?targetInstituteId=';
+
+            HttpRequest req = new HttpRequest();
+            req.setEndpoint(endpoint);
+            req.setMethod('GET');
+            req.setTimeout(120000);
+            req.setHeader('x-api-key', 'api_test_8ae43865-28c1-4a46-81b7-f8421a640c74');
+
+            Http http = new Http();
+            HttpResponse res = http.send(req);
+
+            if (res.getStatusCode() == 200) {
+                // Return base64 encoded blob
+                Blob responseBlob = res.getBodyAsBlob();
+                return EncodingUtil.base64Encode(responseBlob);
+            } else {
+                throw new AuraHandledException('API Error: ' + res.getStatus() + ' - ' + res.getBody());
+            }
+        } catch (Exception e) {
+            System.debug('Error downloading PDF report: ' + e.getMessage());
+            throw new AuraHandledException('Error: ' + e.getMessage());
+        }
+    }
+
+    @AuraEnabled
+    public static String downloadExcelReport(String candidateDocId) {
+        try {
+            String endpoint = 'https://eval-api.trential.dev/v1/eval/candidate-docs/' + candidateDocId + '/combined-evaluation-data/export?targetInstituteId=';
+
+            HttpRequest req = new HttpRequest();
+            req.setEndpoint(endpoint);
+            req.setMethod('GET');
+            req.setTimeout(120000);
+            req.setHeader('x-api-key', 'api_test_8ae43865-28c1-4a46-81b7-f8421a640c74');
+
+            Http http = new Http();
+            HttpResponse res = http.send(req);
+
+            if (res.getStatusCode() == 200) {
+                // Return base64 encoded blob
+                Blob responseBlob = res.getBodyAsBlob();
+                return EncodingUtil.base64Encode(responseBlob);
+            } else {
+                throw new AuraHandledException('API Error: ' + res.getStatus() + ' - ' + res.getBody());
+            }
+        } catch (Exception e) {
+            System.debug('Error downloading Excel report: ' + e.getMessage());
+            throw new AuraHandledException('Error: ' + e.getMessage());
+        }
     }
 }
