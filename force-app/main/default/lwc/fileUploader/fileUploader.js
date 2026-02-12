@@ -53,6 +53,11 @@ export default class FileUploader extends LightningElement {
         return this.candidateDoc?.info?.dateOfBirth || 'N/A';
     }
 
+    get candidateEvalUrl() {
+        const candidateId = this.candidateDoc?.id;
+        return candidateId ? `https://eval.trential.dev/candidate/${candidateId}` : '#';
+    }
+
     // Document list getters
     get documentList() {
         return this.evalDetails?.documentList || [];

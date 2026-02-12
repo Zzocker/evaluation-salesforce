@@ -14,7 +14,9 @@
                         <h3 class="slds-text-heading_small slds-m-bottom_small">Candidate Information</h3>
                         <dl class="slds-dl_horizontal">
                             <dt class="slds-dl_horizontal__label">Case ID:</dt>
-                            <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{candidateDoc.caseId}</dd>
+                            <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">
+                                <a href={candidateEvalUrl} target="_blank" rel="noopener noreferrer">{candidateDoc.caseId}</a>
+                            </dd>
 
                             <dt class="slds-dl_horizontal__label">Name:</dt>
                             <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{candidateName}</dd>
